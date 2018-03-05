@@ -1,13 +1,21 @@
 const fs = require('fs');
 const http = require('http');
 const { handleApiRequest } = require('./api/requestHandler');
+const { initializeTodos } = require('./api/todos');
 
 const PORT = 8080; // Or process.env.SERVER_PORT
 const indexFile = fs.readFileSync('public/index.html');
 const favicon = fs.readFileSync('public/favicon.ico');
 const script = fs.readFileSync('public/script.js');
 
-function handleRequest(request, response) {
+initializeTodos('dblog/db.log')
+  .then(todos => {
+    http.createServer(handleRequest.bind(null, todos)).listen(PORT);
+    console.log(`Listening to port ${PORT}`);
+  })
+  .catch(console.error);
+
+function handleRequest(todos, request, response) {
   console.log('URL:', request.url);
   if (request.url === '/') {
     response.writeHead(200, {
@@ -25,10 +33,9 @@ function handleRequest(request, response) {
     });
     response.end(script);
   } else if (request.url.startsWith('/api/')) {
-    handleApiRequest(request, response);
+    handleApiRequest(todos, request, response);
   } else {
     response.writeHead(404);
     response.end('Not found');
   }
 }
-http.createServer(handleRequest).listen(PORT);

@@ -1,14 +1,4 @@
-const fs = require('fs');
-function appendToLog(logPath, operation, todoId, data) {
-  const logObject = {
-    operation,
-    todoId,
-    data
-  };
-  fs.appendFile(logPath, JSON.stringify(logObject) + '\n', err => {
-    if (err) throw err;
-  });
-}
+const { appendToLog, readLog, testLogExists } = require('./db');
 
 function Todos(logPath) {
   const todos = {};
@@ -67,51 +57,43 @@ function Todos(logPath) {
   };
 }
 
-function testLogAccess(logFile) {
-  return new Promise((resolve, reject) => {
-    fs.access(logFile, fs.constants.W_OK, err => {
-      if (err) {
-        reject(false);
-      } else {
-        resolve(true);
-      }
-    });
-  });
-}
-
-exports.initializeTodos = async function(logFile) {
-  try {
-    await testLogAccess(logFile);
-    return restoreFromLog(logFile);
-  } catch (error) {
-    return new Todos(logFile);
-  }
+exports.initializeTodos = function(logFile) {
+  return testLogExists(logFile)
+    .then(() => restoreFromLog(logFile))
+    .catch(() => new Todos(logFile));
 };
 
+function applyOperation(todos, operation) {
+  if (operation.operation === 'add') {
+    todos.add(operation.todoId, operation.data);
+  } else if (operation.operation === 'edit') {
+    todos.edit(operation.todoId, operation.data);
+  } else if (operation.operation === 'complete') {
+    todos.complete(operation.todoId);
+  } else if (operation.operation === 'uncomplete') {
+    todos.uncomplete(operation.todoId);
+  } else if (operation.operation === 'remove') {
+    todos.remove(operation.todoId);
+  } else {
+    throw 'Unknown operation';
+  }
+}
+
 function restoreFromLog(logFile) {
+  console.log('Restoring DB from log');
   return new Promise((resolve, reject) => {
     const todos = new Todos();
-    var lineReader = require('readline').createInterface({
-      input: fs.createReadStream(logFile)
-    });
-
-    lineReader.on('line', function(line) {
-      const operation = JSON.parse(line);
-      if (operation.operation === 'add') {
-        todos.add(operation.todoId, operation.data);
-      } else if (operation.operation === 'edit') {
-        todos.edit(operation.todoId, operation.data);
-      } else if (operation.operation === 'complete') {
-        todos.complete(operation.todoId);
-      } else if (operation.operation === 'uncomplete') {
-        todos.uncomplete(operation.todoId);
-      } else if (operation.operation === 'remove') {
-        todos.remove(operation.todoId);
-      } else {
-        throw 'Unknown operation';
+    const operationStream = readLog(logFile);
+    operationStream.on('readable', () => {
+      let chunk;
+      while (null !== (chunk = operationStream.read())) {
+        process.stdout.write('.');
+        applyOperation(todos, chunk);
       }
     });
-    lineReader.on('close', function(line) {
+    operationStream.on('end', () => {
+      process.stdout.write('\n');
+      console.log('DB restored');
       todos.setLogFile(logFile);
       resolve(todos);
     });

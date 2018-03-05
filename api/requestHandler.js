@@ -1,53 +1,25 @@
-const { initializeTodos } = require('./todos');
-let todos = null;
-initializeTodos('dblog/db.log')
-  .then(res => {
-    todos = res;
-  })
-  .catch(console.error);
+exports.handleApiRequest = async function(todos, request, response) {
+  try {
+    let requestData = null;
+    if (request.method === 'POST' || request.method === 'PATCH') {
+      requestData = await processPost(request, response);
+    }
+    const res = await route(todos, request, response, requestData);
+    if (res) {
+      respondJSON(response, res.status, res.body);
+    } else {
+      respondJSON(response, 404, { message: 'Not found' });
+    }
+  } catch (e) {
+    console.error(e);
+    respondJSON(response, 500, { error: 'Something went wrong' });
+  }
+};
+
 const uuidMatcher =
   '[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}';
 
-function respondJSON(response, status, body) {
-  response.writeHead(status, {
-    'Content-Type': 'application/json',
-    'Cache-Control': 'no-cache'
-  });
-  response.end(JSON.stringify(body));
-}
-
-function getTodoId(path) {
-  const match = path.match(uuidMatcher);
-  if (match) {
-    return match[0].substr(0, match[0].length);
-  }
-}
-
-function respondNotFound(response) {
-  return respondJSON(response, 404, { message: 'Not found' });
-}
-
-async function processPost(request) {
-  let resolve = () => {};
-  let reject = () => {};
-  const promise = new Promise((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
-  let postData = '';
-
-  request.on('data', data => {
-    postData += data;
-    if (postData.length > 1e6) reject('No way');
-  });
-
-  request.on('end', () => {
-    resolve(JSON.parse(postData));
-  });
-  return promise;
-}
-
-function route(request, response, data) {
+function route(todos, request, response, data) {
   console.log(request.method);
   if (request.method === 'GET') {
     return { status: 200, body: todos.getTodos() };
@@ -78,20 +50,40 @@ function route(request, response, data) {
   }
 }
 
-exports.handleApiRequest = async function(request, response) {
-  try {
-    let requestData = null;
-    if (request.method === 'POST' || request.method === 'PATCH') {
-      requestData = await processPost(request, response);
-    }
-    const res = await route(request, response, requestData);
-    if (res) {
-      respondJSON(response, res.status, res.body);
-    } else {
-      respondJSON(response, 404, { message: 'Not found' });
-    }
-  } catch (e) {
-    console.error(e);
-    respondJSON(response, 500, { error: 'Something went wrong' });
+function respondJSON(response, status, body) {
+  response.writeHead(status, {
+    'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache'
+  });
+  response.end(JSON.stringify(body));
+}
+async function processPost(request) {
+  let resolve = () => {};
+  let reject = () => {};
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  let postData = '';
+
+  request.on('data', data => {
+    postData += data;
+    if (postData.length > 1e6) reject('No way');
+  });
+
+  request.on('end', () => {
+    resolve(JSON.parse(postData));
+  });
+  return promise;
+}
+
+function getTodoId(path) {
+  const match = path.match(uuidMatcher);
+  if (match) {
+    return match[0].substr(0, match[0].length);
   }
-};
+}
+
+function respondNotFound(response) {
+  return respondJSON(response, 404, { message: 'Not found' });
+}
