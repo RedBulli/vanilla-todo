@@ -23,4 +23,14 @@
 
 ```
 node --experimental-modules index.mjs
+# OR
+bin/node index.mjs
+```
+
+## Testing
+
+```
+node --experimental-modules testAll.mjs
+# OR
+bin/node testAll.mjs
 ```

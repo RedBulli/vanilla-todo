@@ -31,8 +31,6 @@ async function testRestore() {
   const restoredTodos = await initializeTodos(TEST_LOG_FILE);
   assert.deepEqual(todos.getTodos(), restoredTodos.getTodos());
 }
-Promise.all([testRestore()])
-  .then(() => {
-    console.log('All OK');
-  })
-  .catch(console.error);
+export default function test() {
+  return Promise.all([testRestore()]);
+}

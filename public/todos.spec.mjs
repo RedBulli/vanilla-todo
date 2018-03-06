@@ -55,14 +55,12 @@ function testTodoRemove() {
   todos.remove('test');
   assert.deepEqual(todos.getTodos(), {});
 }
-Promise.all([
-  testTodoAdd(),
-  testTodoEdit(),
-  testTodoComplete(),
-  testTodoUncomplete(),
-  testTodoRemove()
-])
-  .then(() => {
-    console.log('All OK');
-  })
-  .catch(console.error);
+export default function test() {
+  return Promise.all([
+    testTodoAdd(),
+    testTodoEdit(),
+    testTodoComplete(),
+    testTodoUncomplete(),
+    testTodoRemove()
+  ]);
+}
