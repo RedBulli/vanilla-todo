@@ -2,7 +2,7 @@
 
 ## That being said, the dependencies are
 
-* A relatively new Node version
+* A _new_ Node version (using experimental modules)
 * A decent browser
 
 ## Rules
@@ -18,3 +18,9 @@
 * Fast
 * UI is also very fast
   * Optimistic updates (everywhere?)
+
+## Running
+
+```
+node --experimental-modules index.mjs
+```

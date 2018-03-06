@@ -1,12 +1,13 @@
-const fs = require('fs');
-const http = require('http');
-const { handleApiRequest } = require('./api/requestHandler');
-const { initializeTodos } = require('./api/todos');
+import fs from 'fs';
+import http from 'http';
+import { handleApiRequest } from './api/requestHandler';
+import { initializeTodos } from './api/todos';
 
 const PORT = 8080; // Or process.env.SERVER_PORT
 const indexFile = fs.readFileSync('public/index.html');
 const favicon = fs.readFileSync('public/favicon.ico');
 const script = fs.readFileSync('public/script.js');
+const todosScript = fs.readFileSync('public/todos.mjs');
 
 initializeTodos('dblog/db.log')
   .then(todos => {
@@ -32,6 +33,11 @@ function handleRequest(todos, request, response) {
       'Content-Type': 'application/javascript'
     });
     response.end(script);
+  } else if (request.url === '/todos.mjs') {
+    response.writeHead(200, {
+      'Content-Type': 'application/javascript'
+    });
+    response.end(todosScript);
   } else if (request.url.startsWith('/api/')) {
     handleApiRequest(todos, request, response);
   } else {

@@ -1,4 +1,4 @@
-exports.handleApiRequest = async function(todos, request, response) {
+export async function handleApiRequest(todos, request, response) {
   try {
     let requestData = null;
     if (request.method === 'POST' || request.method === 'PATCH') {
@@ -14,13 +14,12 @@ exports.handleApiRequest = async function(todos, request, response) {
     console.error(e);
     respondJSON(response, 500, { error: 'Something went wrong' });
   }
-};
+}
 
 const uuidMatcher =
   '[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}';
 
 function route(todos, request, response, data) {
-  console.log(request.method);
   if (request.method === 'GET') {
     return { status: 200, body: todos.getTodos() };
   }
@@ -29,24 +28,8 @@ function route(todos, request, response, data) {
     return respondNotFound(response);
   }
   if (request.method === 'POST') {
-    todos.add(todoId, data.message);
-    return { status: 201, body: { message: 'Todo created' } };
-  } else if (request.method === 'PATCH') {
-    if (data.message) {
-      todos.edit(todoId, data.message);
-      return { status: 200, body: { message: 'Todo message edited' } };
-    } else if (typeof data.completed === 'boolean') {
-      if (data.completed) {
-        todos.complete(todoId);
-      } else {
-        todos.uncomplete(todoId);
-      }
-      return { status: 200, body: { message: 'Todo completion changed' } };
-    }
-    throw 'Unknown operation';
-  } else if (request.method === 'DELETE') {
-    todos.remove(todoId);
-    return { status: 200, body: { message: 'Deleted' } };
+    todos.applyOperation(data);
+    return { status: 200, body: { message: 'Operation applied' } };
   }
 }
 
@@ -72,7 +55,11 @@ async function processPost(request) {
   });
 
   request.on('end', () => {
-    resolve(JSON.parse(postData));
+    try {
+      resolve(JSON.parse(postData));
+    } catch (error) {
+      reject(error);
+    }
   });
   return promise;
 }

@@ -1,6 +1,7 @@
-const assert = require('assert');
-const fs = require('fs');
-const { Todos, restoreFromLog } = require('./todos');
+import assert from 'assert';
+import fs from 'fs';
+import { initializeTodos } from './todos';
+import Todos from '../public/todos';
 
 const TEST_LOG_FILE = 'dblog/test.log';
 
@@ -72,7 +73,7 @@ function testTodoRemove() {
 
 async function testRestore() {
   await clearLog();
-  const todos = new Todos(TEST_LOG_FILE);
+  const todos = await initializeTodos(TEST_LOG_FILE);
   todos.add('test', 'message');
   todos.add('test2', 'message2');
   todos.add('test3', 'message3');
@@ -83,7 +84,7 @@ async function testRestore() {
   todos.uncomplete('test2');
   todos.remove('test3');
   todos.complete('test');
-  const restoredTodos = await restoreFromLog(TEST_LOG_FILE);
+  const restoredTodos = await initializeTodos(TEST_LOG_FILE);
   assert.deepEqual(todos.getTodos(), restoredTodos.getTodos());
 }
 Promise.all([

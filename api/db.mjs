@@ -1,18 +1,13 @@
-const stream = require('stream');
-const fs = require('fs');
+import stream from 'stream';
+import fs from 'fs';
 
-exports.appendToLog = function(logPath, operation, todoId, data) {
-  const logObject = {
-    operation,
-    todoId,
-    data
-  };
-  fs.appendFile(logPath, JSON.stringify(logObject) + '\n', err => {
+export function appendToLog(logPath, operation) {
+  fs.appendFile(logPath, JSON.stringify(operation) + '\n', err => {
     if (err) throw err;
   });
-};
+}
 
-exports.testLogExists = async function(logFile) {
+export async function testLogExists(logFile) {
   return new Promise((resolve, reject) => {
     fs.access(logFile, fs.constants.W_OK, err => {
       if (err) {
@@ -22,7 +17,7 @@ exports.testLogExists = async function(logFile) {
       }
     });
   });
-};
+}
 
 function splitNewlines() {
   const liner = new stream.Transform({ objectMode: true });
@@ -53,9 +48,9 @@ function jsonParser() {
   return parser;
 }
 
-exports.readLog = function(logPath) {
+export function readLog(logPath) {
   const source = fs.createReadStream(logPath);
   const parser = jsonParser();
   source.pipe(splitNewlines()).pipe(parser);
   return parser;
-};
+}
