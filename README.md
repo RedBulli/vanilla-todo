@@ -7,7 +7,7 @@
 
 ## Rules
 
-* We are here to learn
+* Focus on learning
 * No additional dependencies. A custom solution for everything. How hard can it be?
 * Keep the domain super simple, unless X-requirement opens up an interesting problem you would like to learn about
 * Don't prematurely overengineer, unless, of course, you want to learn
