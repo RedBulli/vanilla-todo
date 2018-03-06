@@ -1,4 +1,4 @@
-import { appendToLog, readLog, testLogExists } from './db';
+import { appendToLog, readLog, testLogExists } from './fileUtils';
 import Todos from '../public/todos';
 
 export function initializeTodos(logFile) {

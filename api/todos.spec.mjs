@@ -1,7 +1,6 @@
 import assert from 'assert';
 import fs from 'fs';
 import { initializeTodos } from './todos';
-import Todos from '../public/todos';
 
 const TEST_LOG_FILE = 'dblog/test.log';
 
@@ -14,61 +13,6 @@ function clearLog() {
       resolve();
     });
   });
-}
-
-function testTodoAdd() {
-  const todos = new Todos();
-  todos.add('test', 'message');
-  assert.deepEqual(todos.getTodos(), {
-    test: {
-      message: 'message',
-      completed: false
-    }
-  });
-}
-
-function testTodoEdit() {
-  const todos = new Todos();
-  todos.add('test', 'message');
-  todos.edit('test', 'edited');
-  assert.deepEqual(todos.getTodos(), {
-    test: {
-      message: 'edited',
-      completed: false
-    }
-  });
-}
-
-function testTodoComplete() {
-  const todos = new Todos();
-  todos.add('test', 'message');
-  todos.complete('test');
-  assert.deepEqual(todos.getTodos(), {
-    test: {
-      message: 'message',
-      completed: true
-    }
-  });
-}
-
-function testTodoUncomplete() {
-  const todos = new Todos();
-  todos.add('test', 'message');
-  todos.complete('test');
-  todos.uncomplete('test');
-  assert.deepEqual(todos.getTodos(), {
-    test: {
-      message: 'message',
-      completed: false
-    }
-  });
-}
-
-function testTodoRemove() {
-  const todos = new Todos();
-  todos.add('test', 'message');
-  todos.remove('test');
-  assert.deepEqual(todos.getTodos(), {});
 }
 
 async function testRestore() {
@@ -87,14 +31,7 @@ async function testRestore() {
   const restoredTodos = await initializeTodos(TEST_LOG_FILE);
   assert.deepEqual(todos.getTodos(), restoredTodos.getTodos());
 }
-Promise.all([
-  testTodoAdd(),
-  testTodoEdit(),
-  testTodoComplete(),
-  testTodoUncomplete(),
-  testTodoRemove(),
-  testRestore()
-])
+Promise.all([testRestore()])
   .then(() => {
     console.log('All OK');
   })
