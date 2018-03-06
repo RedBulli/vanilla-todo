@@ -2,7 +2,7 @@
 
 ## That being said, the dependencies are
 
-* A _new_ Node version using [experimental modules](https://nodejs.org/api/esm.html)
+* A _new_ Node version, because this is using [experimental modules](https://nodejs.org/api/esm.html)
 * A decent browser
 
 ## Rules
