@@ -6,11 +6,16 @@
   <body>
     <h1>Todos</h1>
     <form id="newTodo">
-      <input type="text" id="message" />
+      <input id="message" type="text" />
       <button>Create</button>
     </form>
-
-    <div id="app"></div>
+    <ul id="todos"></ul>
     <script src="script.js" type="module"></script>
   </body>
+  <template id="todo">
+    <li>
+      <span class="message"></span>
+      <input class="completed" type="checkbox" />
+    </li>
+  </template>
 </html>

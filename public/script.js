@@ -22,35 +22,24 @@ function sendToServer(operation) {
 }
 
 function todosList(todos, toggleCompletion) {
-  const todosEl = document.createElement('ul');
-  const mockTodo = document.createElement('li');
-  Object.keys(todos).forEach(todoId => {
+  const todoTemplate = document.querySelector('#todo');
+  return Object.keys(todos).map(todoId => {
+    const todoEl = todoTemplate.content.cloneNode(true);
     const todo = todos[todoId];
-    const todoEl = document.createElement('li');
-    const textSpan = document.createElement('span');
-    textSpan.textContent = todo.message;
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.checked = todo.completed;
-    checkbox.onchange = function() {
-      toggleCompletion(todoId, !todo.completed);
-    };
-    todoEl.appendChild(textSpan);
-    todoEl.appendChild(checkbox);
-    todosEl.appendChild(todoEl);
+    todoEl.querySelector('.message').textContent = todo.message;
+    const checkboxEl = todoEl.querySelector('.completed');
+    checkboxEl.checked = todo.completed;
+    checkboxEl.onchange = toggleCompletion.bind(null, todoId, !todo.completed);
+    return todoEl;
   });
-  return todosEl;
 }
 
 function updateUI(todos) {
-  const appElement = document.querySelector('#app');
-  const currentChild = appElement.firstChild;
-  const nextChild = todosList(todos.getState(), toggleCompletion);
-  if (currentChild) {
-    appElement.replaceChild(nextChild, currentChild);
-  } else {
-    appElement.appendChild(nextChild);
-  }
+  const todosElement = document.querySelector('#todos');
+  todosElement.innerHTML = '';
+  todosList(todos.getState(), toggleCompletion).forEach(todoEl => {
+    todosElement.appendChild(todoEl);
+  });
 
   function toggleCompletion(todoId, completed) {
     if (completed) {
