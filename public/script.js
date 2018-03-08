@@ -64,8 +64,10 @@ function updateUI(todos) {
     const formElement = document.querySelector('#newTodo');
     formElement.addEventListener('submit', ev => {
       ev.preventDefault();
-      const message = ev.target.querySelector('#message').value;
+      const messageEl = ev.target.querySelector('#message');
+      const message = messageEl.value;
       todos.add(generateUUID(), message);
+      messageEl.value = '';
     });
   });
 })();
