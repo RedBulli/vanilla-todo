@@ -1,7 +1,7 @@
 import fs from 'fs';
 import http from 'http';
 import { handleApiRequest } from './api/requestHandler';
-import { initializeTodos } from './api/todos';
+import { initializeTodos } from './api/todosStorage';
 
 const PORT = 8080; // Or process.env.SERVER_PORT
 const indexFile = fs.readFileSync('public/index.html');
