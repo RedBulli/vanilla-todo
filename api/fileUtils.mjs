@@ -2,7 +2,7 @@ import stream from 'stream';
 import fs from 'fs';
 
 export function appendToLog(logPath, operation) {
-  fs.appendFile(logPath, JSON.stringify(operation) + '\n', err => {
+  fs.appendFileSync(logPath, JSON.stringify(operation) + '\n', err => {
     if (err) throw err;
   });
 }
