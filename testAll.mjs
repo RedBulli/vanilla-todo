@@ -1,5 +1,5 @@
 import publicTodosTest from './public/todos.spec';
-import apiTodosTest from './api/todos.spec';
+import apiTodosTest from './api/todosStorage.spec';
 
 Promise.all([publicTodosTest(), apiTodosTest()])
   .then(() => {

@@ -15,6 +15,7 @@ export default function Todos(onOperation) {
 
   function add(todoId, message) {
     validateMessage(message);
+    if (todos[todoId]) throw 'Todo key already exists';
     todos[todoId] = {
       message,
       completed: false

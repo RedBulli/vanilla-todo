@@ -1,6 +1,6 @@
 import assert from 'assert';
 import fs from 'fs';
-import { initializeTodos } from './todos';
+import { initializeTodos } from './todosStorage';
 
 const TEST_LOG_FILE = 'dblog/test.log';
 

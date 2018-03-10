@@ -12,6 +12,14 @@ function testTodoAdd() {
   });
 }
 
+function testTodoAddCollisionThrows() {
+  const todos = new Todos();
+  todos.add('test', 'message');
+  assert.throws(() => {
+    todos.add('test', 'other');
+  }, 'Todo key already exists');
+}
+
 function testTodoEdit() {
   const todos = new Todos();
   todos.add('test', 'message');
@@ -61,6 +69,7 @@ export default function test() {
     testTodoEdit(),
     testTodoComplete(),
     testTodoUncomplete(),
-    testTodoRemove()
+    testTodoRemove(),
+    testTodoAddCollisionThrows()
   ]);
 }
