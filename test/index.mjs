@@ -1,8 +1,7 @@
-import publicTodosTest from '../public/todos.spec';
-import apiTodosTest from '../api/todosStorage.spec';
+import '../public/todos.spec';
+import '../api/todosStorage.spec';
 
-Promise.all([publicTodosTest(), apiTodosTest()])
-  .then(() => {
-    console.log('All OK');
-  })
-  .catch(console.error);
+export async function it(message, testFn) {
+  await testFn();
+  console.log(message, 'OK');
+}

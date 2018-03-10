@@ -1,6 +1,7 @@
 import assert from 'assert';
 import fs from 'fs';
 import { initializeTodos } from './todosStorage';
+import { it } from '../test';
 
 const TEST_LOG_FILE = 'dblog/test.log';
 
@@ -15,7 +16,7 @@ function clearLog() {
   });
 }
 
-async function testRestore() {
+it('restores the todos state from a operations logfile', async () => {
   await clearLog();
   const todos = await initializeTodos(TEST_LOG_FILE);
   todos.add('test', 'message');
@@ -30,7 +31,4 @@ async function testRestore() {
   todos.complete('test');
   const restoredTodos = await initializeTodos(TEST_LOG_FILE);
   assert.deepEqual(todos.getTodos(), restoredTodos.getTodos());
-}
-export default function test() {
-  return Promise.all([testRestore()]);
-}
+});

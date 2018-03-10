@@ -1,7 +1,8 @@
 import assert from 'assert';
 import Todos from './todos';
+import { it } from '../test';
 
-function testTodoAdd() {
+it('#add adds a todo to the todos', () => {
   const todos = new Todos();
   todos.add('test', 'message');
   assert.deepEqual(todos.getTodos(), {
@@ -10,17 +11,17 @@ function testTodoAdd() {
       completed: false
     }
   });
-}
+});
 
-function testTodoAddCollisionThrows() {
+it('#add throws if the todo key exits', () => {
   const todos = new Todos();
   todos.add('test', 'message');
   assert.throws(() => {
     todos.add('test', 'other');
   }, 'Todo key already exists');
-}
+});
 
-function testTodoEdit() {
+it('#edit edits todo message', () => {
   const todos = new Todos();
   todos.add('test', 'message');
   todos.edit('test', 'edited');
@@ -30,9 +31,9 @@ function testTodoEdit() {
       completed: false
     }
   });
-}
+});
 
-function testTodoComplete() {
+it('#complete marks todo as completed', () => {
   const todos = new Todos();
   todos.add('test', 'message');
   todos.complete('test');
@@ -42,9 +43,9 @@ function testTodoComplete() {
       completed: true
     }
   });
-}
+});
 
-function testTodoUncomplete() {
+it('#uncomplete marks todo as not completed', () => {
   const todos = new Todos();
   todos.add('test', 'message');
   todos.complete('test');
@@ -55,21 +56,11 @@ function testTodoUncomplete() {
       completed: false
     }
   });
-}
+});
 
-function testTodoRemove() {
+it('#remove removes todo', () => {
   const todos = new Todos();
   todos.add('test', 'message');
   todos.remove('test');
   assert.deepEqual(todos.getTodos(), {});
-}
-export default function test() {
-  return Promise.all([
-    testTodoAdd(),
-    testTodoEdit(),
-    testTodoComplete(),
-    testTodoUncomplete(),
-    testTodoRemove(),
-    testTodoAddCollisionThrows()
-  ]);
-}
+});
