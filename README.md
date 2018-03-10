@@ -22,15 +22,11 @@
 ## Running
 
 ```
-node --experimental-modules index.mjs
-# OR
-bin/node index.mjs
+bin/node server
 ```
 
 ## Testing
 
 ```
-node --experimental-modules testAll.mjs
-# OR
-bin/node testAll.mjs
+bin/node test
 ```
