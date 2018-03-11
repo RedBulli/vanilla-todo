@@ -1,6 +1,7 @@
 import assert from 'assert';
 import '../public/todos.spec';
 import '../api/todosStorage.spec';
+process.env.LOG_LEVEL = 'ERRORS';
 
 export async function it(message, testFn) {
   try {

@@ -1,5 +1,6 @@
 import { appendToLog, readLog, testLogExists } from './fileUtils';
 import Todos from '../public/todos';
+import logger from '../server/logger';
 
 export function initializeTodos(logFile) {
   return testLogExists(logFile)
@@ -8,20 +9,20 @@ export function initializeTodos(logFile) {
 }
 
 export function restoreFromLog(logFile) {
-  console.log('Restoring DB from log');
+  logger('Restoring DB from log');
   return new Promise((resolve, reject) => {
     const todos = new Todos();
     const operationStream = readLog(logFile);
+    let operationsCount = 0;
     operationStream.on('readable', () => {
       let operation;
       while (null !== (operation = operationStream.read())) {
-        process.stdout.write('.');
+        operationsCount++;
         todos.applyOperation(operation);
       }
     });
     operationStream.on('end', () => {
-      process.stdout.write('\n');
-      console.log('DB restored');
+      logger(`DB restored from ${operationsCount} operations`);
       todos.setOperationFn(appendToLog.bind(null, logFile));
       resolve(todos);
     });
