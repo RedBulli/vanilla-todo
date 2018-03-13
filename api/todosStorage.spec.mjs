@@ -11,7 +11,7 @@ function clearLog() {
   } catch (error) {}
 }
 
-it('restores the todos state from a operations logfile', async () => {
+it('todoStorage#initializeTodos restores the todos state from a operations logfile', async () => {
   clearLog();
   const todos = await initializeTodos(TEST_LOG_FILE);
   todos.add('test', 'message');

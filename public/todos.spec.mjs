@@ -2,7 +2,7 @@ import assert from 'assert';
 import Todos from './todos';
 import { it } from '../test';
 
-it('#add adds a todo to the todos', () => {
+it('Todos#add adds a todo to the todos', () => {
   const todos = new Todos();
   todos.add('test', 'message');
   assert.deepEqual(todos.getTodos(), {
@@ -13,7 +13,7 @@ it('#add adds a todo to the todos', () => {
   });
 });
 
-it('#add throws if the todo key exits', () => {
+it('Todos#add throws if the todo key exits', () => {
   const todos = new Todos();
   todos.add('test', 'message');
   assert.throws(() => {
@@ -21,7 +21,7 @@ it('#add throws if the todo key exits', () => {
   }, 'Todo key already exists');
 });
 
-it('#edit edits todo message', () => {
+it('Todos#edit edits todo message', () => {
   const todos = new Todos();
   todos.add('test', 'message');
   todos.edit('test', 'edited');
@@ -33,7 +33,7 @@ it('#edit edits todo message', () => {
   });
 });
 
-it('#complete marks todo as completed', () => {
+it('Todos#complete marks todo as completed', () => {
   const todos = new Todos();
   todos.add('test', 'message');
   todos.complete('test');
@@ -45,7 +45,7 @@ it('#complete marks todo as completed', () => {
   });
 });
 
-it('#uncomplete marks todo as not completed', () => {
+it('Todos#uncomplete marks todo as not completed', () => {
   const todos = new Todos();
   todos.add('test', 'message');
   todos.complete('test');
@@ -58,7 +58,7 @@ it('#uncomplete marks todo as not completed', () => {
   });
 });
 
-it('#remove removes todo', () => {
+it('Todos#remove removes todo', () => {
   const todos = new Todos();
   todos.add('test', 'message');
   todos.remove('test');
