@@ -5,7 +5,7 @@
 - A _new_ Node version, because this is using [experimental modules](https://nodejs.org/api/esm.html)
 - A decent browser
 
-# Test modifying the readme edit edit
+# Test modifying the readme edit edit edit
 
 ## Rules
 
