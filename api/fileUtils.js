@@ -1,15 +1,15 @@
-import stream from 'stream';
-import fs from 'fs';
+import stream from "stream";
+import fs from "fs";
 
 export function appendToLog(logPath, operation) {
-  fs.appendFileSync(logPath, JSON.stringify(operation) + '\n', err => {
+  fs.appendFileSync(logPath, JSON.stringify(operation) + "\n", (err) => {
     if (err) throw err;
   });
 }
 
 export async function testLogExists(logFile) {
   return new Promise((resolve, reject) => {
-    fs.access(logFile, fs.constants.W_OK, err => {
+    fs.access(logFile, fs.constants.W_OK, (err) => {
       if (err) {
         reject(false);
       } else {
@@ -21,17 +21,17 @@ export async function testLogExists(logFile) {
 
 function splitNewlines() {
   const liner = new stream.Transform({ objectMode: true });
-  liner._transform = function(chunk, encoding, done) {
+  liner._transform = function (chunk, encoding, done) {
     let data = chunk.toString();
     if (this._lastLine) data = this._lastLine + data;
 
-    const lines = data.split('\n');
+    const lines = data.split("\n");
     this._lastLine = lines.pop();
     lines.forEach(this.push.bind(this));
     done();
   };
 
-  liner._flush = function(done) {
+  liner._flush = function (done) {
     if (this._lastLine) this.push(this._lastLine);
     this._lastLine = null;
     done();
@@ -41,7 +41,7 @@ function splitNewlines() {
 
 function jsonParser() {
   const parser = new stream.Transform({ objectMode: true });
-  parser._transform = function(chunk, encoding, done) {
+  parser._transform = function (chunk, encoding, done) {
     this.push(JSON.parse(chunk));
     done();
   };

@@ -8,36 +8,36 @@ export default function Todos(onOperation) {
   }
 
   function validateMessage(message) {
-    if (typeof message !== 'string' || message.length === 0) {
-      throw 'Validation Error';
+    if (typeof message !== "string" || message.length === 0) {
+      throw "Validation Error";
     }
   }
 
   function add(todoId, message) {
     validateMessage(message);
-    if (todos[todoId]) throw 'Todo key already exists';
+    if (todos[todoId]) throw "Todo key already exists";
     todos[todoId] = {
       message,
-      completed: false
+      completed: false,
     };
-    opWriter('add', todoId, message);
+    opWriter("add", todoId, message);
   }
   function edit(todoId, message) {
     validateMessage(message);
     todos[todoId].message = message;
-    opWriter('edit', todoId, message);
+    opWriter("edit", todoId, message);
   }
   function complete(todoId) {
     todos[todoId].completed = true;
-    opWriter('complete', todoId);
+    opWriter("complete", todoId);
   }
   function uncomplete(todoId) {
     todos[todoId].completed = false;
-    opWriter('uncomplete', todoId);
+    opWriter("uncomplete", todoId);
   }
   function remove(todoId) {
     delete todos[todoId];
-    opWriter('remove', todoId);
+    opWriter("remove", todoId);
   }
   function getTodos() {
     return Object.assign({}, todos);
@@ -49,18 +49,18 @@ export default function Todos(onOperation) {
     return Object.assign({}, todos);
   }
   function applyOperation(operation) {
-    if (operation.operation === 'add') {
+    if (operation.operation === "add") {
       add(operation.todoId, operation.data);
-    } else if (operation.operation === 'edit') {
+    } else if (operation.operation === "edit") {
       edit(operation.todoId, operation.data);
-    } else if (operation.operation === 'complete') {
+    } else if (operation.operation === "complete") {
       complete(operation.todoId);
-    } else if (operation.operation === 'uncomplete') {
+    } else if (operation.operation === "uncomplete") {
       uncomplete(operation.todoId);
-    } else if (operation.operation === 'remove') {
+    } else if (operation.operation === "remove") {
       remove(operation.todoId);
     } else {
-      throw 'Unknown operation';
+      throw "Unknown operation";
     }
   }
   function restoreSnapshot(snapshot) {
@@ -76,6 +76,6 @@ export default function Todos(onOperation) {
     applyOperation,
     setOperationFn,
     restoreSnapshot,
-    getState
+    getState,
   };
 }

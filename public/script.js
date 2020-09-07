@@ -1,4 +1,4 @@
-import Todos from './todos.mjs';
+import Todos from "./todos.js";
 
 function generateUUID(a) {
   return a
@@ -7,27 +7,27 @@ function generateUUID(a) {
 }
 
 function getTodos() {
-  return fetch('/api/todos').then(response => response.json());
+  return fetch("/api/todos").then((response) => response.json());
 }
 
 function sendToServer(operation) {
   return fetch(`/api/todos/${operation.todoId}`, {
-    cache: 'no-cache',
+    cache: "no-cache",
     headers: {
-      'content-type': 'application/json'
+      "content-type": "application/json",
     },
-    method: 'POST',
-    body: JSON.stringify(operation)
-  }).then(response => response.json());
+    method: "POST",
+    body: JSON.stringify(operation),
+  }).then((response) => response.json());
 }
 
 function todosList(todos, toggleCompletion) {
-  const todoTemplate = document.querySelector('#todo');
-  return Object.keys(todos).map(todoId => {
+  const todoTemplate = document.querySelector("#todo");
+  return Object.keys(todos).map((todoId) => {
     const todoEl = todoTemplate.content.cloneNode(true);
     const todo = todos[todoId];
-    todoEl.querySelector('.message').textContent = todo.message;
-    const checkboxEl = todoEl.querySelector('.completed');
+    todoEl.querySelector(".message").textContent = todo.message;
+    const checkboxEl = todoEl.querySelector(".completed");
     checkboxEl.checked = todo.completed;
     checkboxEl.onchange = toggleCompletion.bind(null, todoId, !todo.completed);
     return todoEl;
@@ -35,9 +35,9 @@ function todosList(todos, toggleCompletion) {
 }
 
 function updateUI(todos) {
-  const todosElement = document.querySelector('#todos');
-  todosElement.innerHTML = '';
-  todosList(todos.getState(), toggleCompletion).forEach(todoEl => {
+  const todosElement = document.querySelector("#todos");
+  todosElement.innerHTML = "";
+  todosList(todos.getState(), toggleCompletion).forEach((todoEl) => {
     todosElement.appendChild(todoEl);
   });
 
@@ -50,8 +50,8 @@ function updateUI(todos) {
   }
 }
 
-(function() {
-  getTodos().then(response => {
+(function () {
+  getTodos().then((response) => {
     const todos = Todos(stateChanged);
     todos.restoreSnapshot(response);
     updateUI(todos);
@@ -61,13 +61,13 @@ function updateUI(todos) {
       updateUI(todos);
     }
 
-    const formElement = document.querySelector('#newTodo');
-    formElement.addEventListener('submit', ev => {
+    const formElement = document.querySelector("#newTodo");
+    formElement.addEventListener("submit", (ev) => {
       ev.preventDefault();
-      const messageEl = ev.target.querySelector('#message');
+      const messageEl = ev.target.querySelector("#message");
       const message = messageEl.value;
       todos.add(generateUUID(), message);
-      messageEl.value = '';
+      messageEl.value = "";
     });
   });
 })();
