@@ -14,7 +14,7 @@ initializeTodos("./dblog/db.log")
   .catch(console.error);
 
 function handleRequest(todos, request, response) {
-  logger("URL:", request.url);
+  logger(`URL: ${request.url}`);
   if (serveStaticFile(request, response)) {
     return;
   } else if (request.url.startsWith("/api/")) {
