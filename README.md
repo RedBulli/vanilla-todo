@@ -19,7 +19,7 @@
 * UI is also very fast
   * Optimistic updates (everywhere?)
 
-## Running
+## Running in development
 
 ```
 bin/node server
@@ -30,3 +30,7 @@ bin/node server
 ```
 bin/node test
 ```
+
+## Running in production with nginx
+* `location /` -> public directory
+* `location /api/` -> localhost:8080
