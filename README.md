@@ -30,7 +30,3 @@ bin/node server
 ```
 bin/node test
 ```
-
-## Running in production with nginx
-* `location /` -> public directory
-* `location /api/` -> localhost:8080
