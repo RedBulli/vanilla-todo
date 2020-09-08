@@ -17,9 +17,10 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - name: Deploy
-        run: doctl compute ssh todo --ssh-command './test.sh'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOYMENT_HOST }}
+          USERNAME: ${{ secrets.DEPLOYMENT_USERNAME }}
+          KEY: ${{ secrets.DEPLOYMENT_SSHKEY }}
+          script: ./deploy.sh
