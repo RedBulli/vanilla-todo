@@ -7,7 +7,20 @@ function generateUUID(a) {
 }
 
 function getTodos() {
-  return fetch("/api/todos").then((response) => response.json());
+  const element = document.querySelector("#loading-from-server");
+  const promise = fetch("/api/todos")
+    .then((response) => response.json())
+    .then((todos) => {
+      element.textContent = "";
+      return todos;
+    })
+    .catch(
+      (error) =>
+        (element.textContent = `Loading Todos from Server failed ${error}`)
+    );
+
+  element.textContent = "Loading Todos from Server";
+  return promise;
 }
 
 function sendToServer(operation) {
