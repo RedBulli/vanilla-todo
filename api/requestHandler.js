@@ -28,8 +28,15 @@ function route(todos, request, response, data) {
     return respondNotFound(response);
   }
   if (request.method === "POST") {
-    todos.applyOperation(data);
-    return { status: 200, body: { message: "Operation applied" } };
+    const isApplied = todos.applyOperation(data);
+    if (isApplied) {
+      return { status: 200, body: { message: "Operation applied" } };
+    } else {
+      return {
+        status: 400,
+        body: { message: "Operation has already been applied" },
+      };
+    }
   }
 }
 

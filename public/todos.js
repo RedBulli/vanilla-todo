@@ -68,7 +68,7 @@ export default function Todos() {
       operation.id = generateUUID();
     } else if (operations[operation.id]) {
       // Don't reapply operations
-      return;
+      return false;
     }
     if (operation.operation === "add") {
       validateMessage(operation.data);
@@ -95,11 +95,13 @@ export default function Todos() {
     }
     operations[operation.id] = operation;
     opWriter(operation);
+    return true;
   }
 
   function restoreSnapshot(snapshot) {
     todos = snapshot;
   }
+
   return {
     add,
     edit,
