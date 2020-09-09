@@ -1,10 +1,26 @@
-export default function Todos(onOperation) {
+function generateUUID(a) {
+  return a
+    ? (a ^ ((Math.random() * 16) >> (a / 4))).toString(16)
+    : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, generateUUID);
+}
+
+export default function Todos() {
   let todos = {};
-  let operationFn = onOperation;
-  function opWriter(operation, todoId, data) {
-    if (operationFn) {
-      operationFn({ operation, todoId, data });
-    }
+  let callbacks = [];
+  let operations = {};
+
+  function opWriter(operation) {
+    callbacks.forEach((callback) => {
+      callback(operation);
+    });
+  }
+
+  function subscribe(callback) {
+    callbacks.push(callback);
+    const unsubscribe = () => {
+      callbacks.splice(callbacks.indexOf(callback), 1);
+    };
+    return unsubscribe;
   }
 
   function validateMessage(message) {
@@ -14,55 +30,73 @@ export default function Todos(onOperation) {
   }
 
   function add(todoId, message) {
-    validateMessage(message);
-    if (todos[todoId]) throw "Todo key already exists";
-    todos[todoId] = {
-      message,
-      completed: false,
-    };
-    opWriter("add", todoId, message);
+    applyOperation({ operation: "add", todoId, data: message });
   }
+
   function edit(todoId, message) {
-    validateMessage(message);
-    todos[todoId].message = message;
-    opWriter("edit", todoId, message);
+    applyOperation({ operation: "edit", todoId, data: message });
   }
+
   function complete(todoId) {
-    todos[todoId].completed = true;
-    opWriter("complete", todoId);
+    applyOperation({ operation: "complete", todoId });
   }
+
   function uncomplete(todoId) {
-    todos[todoId].completed = false;
-    opWriter("uncomplete", todoId);
+    applyOperation({ operation: "uncomplete", todoId });
   }
+
   function remove(todoId) {
-    delete todos[todoId];
-    opWriter("remove", todoId);
+    applyOperation({ operation: "remove", todoId });
   }
+
   function getTodos() {
     return Object.assign({}, todos);
   }
-  function setOperationFn(newFn) {
-    operationFn = newFn;
-  }
+
   function getState() {
     return Object.assign({}, todos);
   }
+
+  function validateTodoExists(todoId) {
+    if (!todos[todoId]) {
+      throw `Todo ${todoId} doesn't exist`;
+    }
+  }
+
   function applyOperation(operation) {
+    if (!operation.id) {
+      operation.id = generateUUID();
+    } else if (operations[operation.id]) {
+      // Don't reapply operations
+      return;
+    }
     if (operation.operation === "add") {
-      add(operation.todoId, operation.data);
+      validateMessage(operation.data);
+      if (todos[operation.todoId]) throw "Todo key already exists";
+      todos[operation.todoId] = {
+        message: operation.data,
+        completed: false,
+      };
     } else if (operation.operation === "edit") {
-      edit(operation.todoId, operation.data);
+      validateTodoExists(operation.todoId);
+      validateMessage(operation.data);
+      todos[operation.todoId].message = operation.data;
     } else if (operation.operation === "complete") {
-      complete(operation.todoId);
+      validateTodoExists(operation.todoId);
+      todos[operation.todoId].completed = true;
     } else if (operation.operation === "uncomplete") {
-      uncomplete(operation.todoId);
+      validateTodoExists(operation.todoId);
+      todos[operation.todoId].completed = false;
     } else if (operation.operation === "remove") {
-      remove(operation.todoId);
+      validateTodoExists(operation.todoId);
+      delete todos[operation.todoId];
     } else {
       throw "Unknown operation";
     }
+    operations[operation.id] = operation;
+    opWriter(operation);
   }
+
   function restoreSnapshot(snapshot) {
     todos = snapshot;
   }
@@ -74,8 +108,9 @@ export default function Todos(onOperation) {
     remove,
     getTodos,
     applyOperation,
-    setOperationFn,
     restoreSnapshot,
     getState,
+    subscribe,
+    operations,
   };
 }

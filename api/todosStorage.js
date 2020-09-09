@@ -5,7 +5,11 @@ import logger from "../server/logger.js";
 export function initializeTodos(logFile) {
   return testLogExists(logFile)
     .then(() => restoreFromLog(logFile))
-    .catch(() => new Todos(appendToLog.bind(null, logFile)));
+    .catch(() => new Todos())
+    .then((todos) => {
+      todos.subscribe(appendToLog.bind(null, logFile));
+      return todos;
+    });
 }
 
 export function restoreFromLog(logFile) {
@@ -23,7 +27,6 @@ export function restoreFromLog(logFile) {
     });
     operationStream.on("end", () => {
       logger(`DB restored from ${operationsCount} operations`);
-      todos.setOperationFn(appendToLog.bind(null, logFile));
       resolve(todos);
     });
   });

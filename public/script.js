@@ -60,14 +60,21 @@ function updateUI(todos) {
 
 (function () {
   getTodos().then((response) => {
-    const todos = Todos(stateChanged);
-    todos.restoreSnapshot(response);
-    updateUI(todos);
-
+    const todos = Todos();
     function stateChanged(operation) {
       sendToServer(operation);
       updateUI(todos);
     }
+
+    todos.subscribe(stateChanged);
+    todos.restoreSnapshot(response);
+    updateUI(todos);
+
+    const eventSource = new EventSource("/stream");
+    eventSource.onmessage = (event) => {
+      const operation = JSON.parse(event.data);
+      todos.applyOperation(operation);
+    };
 
     const formElement = document.querySelector("#newTodo");
     formElement.addEventListener("submit", (ev) => {

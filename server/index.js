@@ -1,5 +1,6 @@
 import http from "http";
 import { handleApiRequest } from "../api/requestHandler.js";
+import { handleStreamRequest } from "../api/streamHandler.js";
 import { initializeTodos } from "../api/todosStorage.js";
 import serveStaticFile from "./staticFiles.js";
 import logger from "./logger.js";
@@ -19,6 +20,8 @@ function handleRequest(todos, request, response) {
     return;
   } else if (request.url.startsWith("/api/")) {
     handleApiRequest(todos, request, response);
+  } else if (request.url.startsWith("/stream")) {
+    handleStreamRequest(todos, request, response);
   } else {
     response.writeHead(404).end("Not found");
   }
