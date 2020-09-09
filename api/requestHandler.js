@@ -1,45 +1,46 @@
 export async function handleApiRequest(todos, request, response) {
   try {
     let requestData = null;
-    if (request.method === 'POST' || request.method === 'PATCH') {
+    if (request.method === "POST" || request.method === "PATCH") {
       requestData = await processPost(request, response);
     }
     const res = await route(todos, request, response, requestData);
     if (res) {
       respondJSON(response, res.status, res.body);
     } else {
-      respondJSON(response, 404, { message: 'Not found' });
+      respondJSON(response, 404, { message: "Not found" });
     }
   } catch (e) {
     console.error(e);
-    respondJSON(response, 500, { error: 'Something went wrong' });
+    respondJSON(response, 500, { error: "Something went wrong" });
   }
 }
 
 const uuidMatcher =
-  '[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}';
+  "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 
 function route(todos, request, response, data) {
-  if (request.method === 'GET') {
+  if (request.method === "GET") {
     return { status: 200, body: todos.getTodos() };
   }
   const todoId = getTodoId(request.url);
   if (!todoId) {
     return respondNotFound(response);
   }
-  if (request.method === 'POST') {
+  if (request.method === "POST") {
     todos.applyOperation(data);
-    return { status: 200, body: { message: 'Operation applied' } };
+    return { status: 200, body: { message: "Operation applied" } };
   }
 }
 
 function respondJSON(response, status, body) {
   response.writeHead(status, {
-    'Content-Type': 'application/json',
-    'Cache-Control': 'no-cache'
+    "Content-Type": "application/json",
+    "Cache-Control": "no-cache",
   });
   response.end(JSON.stringify(body));
 }
+
 async function processPost(request) {
   let resolve = () => {};
   let reject = () => {};
@@ -47,14 +48,14 @@ async function processPost(request) {
     resolve = res;
     reject = rej;
   });
-  let postData = '';
+  let postData = "";
 
-  request.on('data', data => {
+  request.on("data", (data) => {
     postData += data;
-    if (postData.length > 1e6) reject('No way');
+    if (postData.length > 1e6) reject("No way");
   });
 
-  request.on('end', () => {
+  request.on("end", () => {
     try {
       resolve(JSON.parse(postData));
     } catch (error) {
@@ -72,5 +73,5 @@ function getTodoId(path) {
 }
 
 function respondNotFound(response) {
-  return respondJSON(response, 404, { message: 'Not found' });
+  return respondJSON(response, 404, { message: "Not found" });
 }
