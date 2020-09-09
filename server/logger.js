@@ -1,7 +1,7 @@
-const LOG_LEVELS = ['ERRORS', 'INFO', 'DEBUG'];
+const LOG_LEVELS = ["ERRORS", "INFO", "DEBUG"];
 
 function logLevel() {
-  return process.env.LOG_LEVEL || 'INFO';
+  return process.env.LOG_LEVEL || "INFO";
 }
 
 function shouldLog(level) {
@@ -9,8 +9,9 @@ function shouldLog(level) {
   return loggedLevels.includes(level);
 }
 
-export default function log(message, level = 'INFO') {
+export default function log(message, level = "INFO") {
   if (shouldLog(level)) {
-    console.log(message);
+    const dateStr = new Date().toISOString();
+    console.log(`${dateStr}: ${message}`);
   }
 }
