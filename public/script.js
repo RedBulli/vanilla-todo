@@ -21,7 +21,7 @@ function sendToServer(operation) {
   }).then((response) => response.json());
 }
 
-function todosList(todos, toggleCompletion) {
+function todosList(todos, toggleCompletion, removeTodo) {
   const todoTemplate = document.querySelector("#todo");
   return Object.keys(todos).map((todoId) => {
     const todoEl = todoTemplate.content.cloneNode(true);
@@ -30,6 +30,8 @@ function todosList(todos, toggleCompletion) {
     const checkboxEl = todoEl.querySelector(".completed");
     checkboxEl.checked = todo.completed;
     checkboxEl.onchange = toggleCompletion.bind(null, todoId, !todo.completed);
+    const removeEl = todoEl.querySelector(".remove");
+    removeEl.onclick = removeTodo.bind(null, todoId);
     return todoEl;
   });
 }
@@ -37,9 +39,11 @@ function todosList(todos, toggleCompletion) {
 function updateUI(todos) {
   const todosElement = document.querySelector("#todos");
   todosElement.innerHTML = "";
-  todosList(todos.getState(), toggleCompletion).forEach((todoEl) => {
-    todosElement.appendChild(todoEl);
-  });
+  todosList(todos.getState(), toggleCompletion, removeTodo).forEach(
+    (todoEl) => {
+      todosElement.appendChild(todoEl);
+    }
+  );
 
   function toggleCompletion(todoId, completed) {
     if (completed) {
@@ -47,6 +51,10 @@ function updateUI(todos) {
     } else {
       todos.uncomplete(todoId);
     }
+  }
+
+  function removeTodo(todoId) {
+    todos.remove(todoId);
   }
 }
 
